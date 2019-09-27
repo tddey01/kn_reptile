@@ -14,7 +14,7 @@ if __name__ == '__main__':
     }
 
     # 使用通用的爬虫对url对应的一整张页面进行爬取
-    page_text = requests.get(url=url, headers=headers, verify=False).text
+    page_text = requests.get(url=url, headers=headers, verify=False).text  # verify=False 忽略https证书过期 异常错误提示
 
     # 使用聚焦爬虫将页面中所有数据进行解析/提取
     ex = '<div class="thumb">.*?<img src="(.*?)" alt.*?</div>'
