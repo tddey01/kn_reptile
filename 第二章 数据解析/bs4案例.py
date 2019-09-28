@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # 对首页的页面数据进行爬取
     url = 'http://www.shicimingju.com/book/sanguoyanyi.html'
 
-    page_text = requests.get(url=url, headers=headers).text
+    page_text = requests.get(url=url, headers=headers)
 
     # 在首页中解析出章节的标题和详情页的url
     # 1.实例化BeautifulSoup对象，需要将页面源码数据加载到该对象中
