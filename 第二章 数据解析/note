@@ -1,96 +1,433 @@
-聚焦爬虫:爬取页面中指定的页面内容。
-    - 编码流程：
-        - 指定url
-        - 发起请求
-        - 获取响应数据
-        - 数据解析
-        - 持久化存储
+requests模块
+      - urllib模块
+      - requests模块
+          - requests模块：python中原生的一款基于网络请求的模块，功能非常强大，简单便捷，效率极高。
+          - 作用: 模拟浏览器发请求
 
-数据解析分类：
-    - 正则
-    - bs4
-    - xpath（***）
-
-数据解析原理概述：
-    - 解析的局部的文本内容都会在标签之间或者标签对应的属性中进行存储
-    - 1.进行指定标签的定位
-    - 2.标签或者标签对应的属性中存储的数据值进行提取（解析）
-
-正则解析：
-
-<div class="thumb">
-
-<a href="/article/121721100" target="_blank">
-<img src="//pic.qiushibaike.com/system/pictures/12172/121721100/medium/DNXDX9TZ8SDU6OK2.jpg" alt="指引我有前进的方向">
-</a>
-
-</div>
-
-ex = '<div class="thumb">.*?<img src="(.*?)" alt.*?</div>'
+如何使用：
+    - requests模块使用
+        -  指定URL地址
+        -  发起请求
+        -  获取响应数据
+        -  持久化存储
+环境安装
+    - pip3 install requests
 
 
-bs4进行数据解析
-    - 数据解析的原理：
-        - 1.标签定位
-        - 2.提取标签、标签属性中存储的数据值
-    - bs4数据解析的原理：
-        - 1.实例化一个BeautifulSoup对象，并且将页面源码数据加载到该对象中
-        - 2.通过调用BeautifulSoup对象中相关的属性或者方法进行标签定位和数据提取
-    - 环境安装：
-        - pip install bs4
-        - pip install lxml
-    - 如何实例化BeautifulSoup对象：
-        - from bs4 import BeautifulSoup
-        - 对象的实例化：
-            - 1.将本地的html文档中的数据加载到该对象中
-                    fp = open('./test.html','r',encoding='utf-8')
-                    soup = BeautifulSoup(fp,'lxml')
-            - 2.将互联网上获取的页面源码加载到该对象中
-                    page_text = response.text
-                    soup = BeatifulSoup(page_text,'lxml')
-        - 提供的用于数据解析的方法和属性：
-            - soup.tagName:返回的是文档中第一次出现的tagName对应的标签
-            - soup.find():
-                - find('tagName'):等同于soup.div
-                - 属性定位：
-                    -soup.find('div',class_/id/attr='song')
-            - soup.find_all('tagName'):返回符合要求的所有标签（列表）
-        - select：
-            - select('某种选择器（id，class，标签...选择器）'),返回的是一个列表。
-            - 层级选择器：
-                - soup.select('.tang > ul > li > a')：>表示的是一个层级
-                - oup.select('.tang > ul a')：空格表示的多个层级
-        - 获取标签之间的文本数据：
-            - soup.a.text/string/get_text()
-            - text/get_text():可以获取某一个标签中所有的文本内容
-            - string：只可以获取该标签下面直系的文本内容
-        - 获取标签中属性值：
-            - soup.a['href']
+实战编码环境
+      -  请求搜狗首页页面数据
 
-xpath解析：最常用且最便捷高效的一种解析方式。通用性。
+实战巩固
+      - 需求  爬取搜狗指定词条对应搜索结果页面，（简易网页采集器）
+           - UA检测
+           - UA伪装
+      - 需求  破解百度翻译
+      - 需求  爬取豆瓣电影分类排行榜，https://movie.douban.com/中电影详情数据
+      - 需求  爬取肯德基餐厅查询 https://www.kfc.com.cn/kfccda/index.aspx中指定地点的餐厅数据
+      - 需求 爬取国家药品监督管理总局中基于中华人民共和国化妆品生产许可证相关数据 https://125.3.56.84:81/
+         - 动态加载数据
+         - 首页中对应的企业信息数据是通过ajax动态请求到的
 
-    - xpath解析原理：
-        - 1.实例化一个etree的对象，且需要将被解析的页面源码数据加载到该对象中。
-        - 2.调用etree对象中的xpath方法结合着xpath表达式实现标签的定位和内容的捕获。
-    - 环境的安装：
-        - pip install lxml
-    - 如何实例化一个etree对象:from lxml import etree
-        - 1.将本地的html文档中的源码数据加载到etree对象中：
-            etree.parse(filePath)
-        - 2.可以将从互联网上获取的源码数据加载到该对象中
-            etree.HTML('page_text')
-        - xpath('xpath表达式')
-    - xpath表达式:
-        - /:表示的是从根节点开始定位。表示的是一个层级。
-        - //:表示的是多个层级。可以表示从任意位置开始定位。
-        - 属性定位：//div[@class='song'] tag[@attrName="attrValue"]
-        - 索引定位：//div[@class="song"]/p[3] 索引是从1开始的。
-        - 取文本：
-            - /text() 获取的是标签中直系的文本内容
-            - //text() 标签中非直系的文本内容（所有的文本内容）
-        - 取属性：
-            /@attrName     ==>img/src
+         - 通过对详情页面URL的观察发现
+             - url域名是一样的，只有携带的参数不一样
+             - id值可以从首页对应的ajax请求到的json串中获取
+             - 域名和idhi拼接处完整的一个企业对应详情页的url
+        - 详情页面也是动态加载出来的
+
+数据解析
+       - 回顾requests模块实现数据爬取的流程
+          - 指定url
+          - 发起请求
+          - 获取响应数据
+          - 持久化存储
+              - 聚焦爬虫：爬取页面中指定的页面内容
+              - 其实，在上述流程中还需要较为重要的一步，就是在持久化存储之前需要进行指定数据解析。因为大多数情况下的需求，我们都会指定去使用聚焦爬虫，也就是爬取页面中指定部分的数据值，而不是整个页面的数据。因此，本次课程中会给大家详细介绍讲解三种聚焦爬虫中的数据解析方式。至此，我们的数据爬取的流程可以修改为：
+
+              - 指定url
+              - 发起请求
+              - 获取响应数据
+              - 数据解析
+              - 持久化存储
+
+python如何实现数据解析
+      正则表达式
+      xpath解析
+      bs4解析
+
+数据解析原理概念
+      - 解析的局部的文件内容都会在标签之间或者标签对应属性中进行存储
+          - 进行指定标签的定位，
+          - 标签或者标签对应属性中存储的数据值进行提取（解析）
+      - 正则表达式
+           - 常用正则表达式回顾
+               - 单字符:
+                  .  : 除换行符以外所有字符
+                  [] : [aoe] [a-w] 匹配集合中任意一个字符
+                  \d : 数字 [0-9]
+                  \D : 非数字
+                  \w : 数字、字母、下划线、中文
+                  \W : 非\W
+                  \s : 所有的空白字符包、空格符、制表符、换页符等等。等价于 [\f\n\r\t\v]
+                  \s : 非空白
+               - 数量装饰；
+                     *     :  任意多次 >=0
+                     +     :  至少一次 >=1
+                     ?     :  可有可无 0次或者1次
+                     {m}   :  固定m次 hello{3,}
+                     {m,}  :  至少m次
+                     {m,n} :  m-n次
+               - 边界
+                     $ : 以某某结尾
+                     ^ : 以某某开头
+               - 分组
+                     (ab)
+               - 贪婪模式 : .*
+               - 非贪婪（惰性) 模式 : .*?
+               - re.I  : 忽略大小写
+               - re.M  : 多行匹配
+               - re.S  : 单行匹配
+               - re.sub（正则表达式，替换内容，字符串）
+      - 正则练习
+            import re
+            #提取出python
+            key="javapythonc++php"
+            re.findall('python',key)[0]
+            #####################################################################
+            #提取出hello world
+            key="
+            hello world
+            "
+            re.findall('
+            (.*)
+            ',key)[0]
+            #####################################################################
+            #提取170
+            string = '我喜欢身高为170的女孩'
+            re.findall('\d+',string)
+            #####################################################################
+            #提取出http://和https://
+            key='http://www.baidu.com and https://boob.com'
+            re.findall('https?://',key)
+            #####################################################################
+            #提取出hello
+            key='lalalahellohahah' #输出hello
+            re.findall('<[Hh][Tt][mM][lL]>(.*)',key)
+            #####################################################################
+            #提取出hit.
+            key='bobo@hit.edu.com'#想要匹配到hit.
+            re.findall('h.*?\.',key)
+            #####################################################################
+            #匹配sas和saas
+            key='saas and sas and saaas'
+            re.findall('sa{1,2}s',key)
+      - 项目需求：爬取糗事百科指定页面的糗图，并将其保存到指定文件夹中
+            #!/usr/bin/env python
+            # -*- coding:utf-8 -*-
+            import requests
+            import re
+            import os
+            if __name__ == "__main__":
+            url = 'https://www.qiushibaike.com/pic/%s/'
+            headers={
+               'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+            }
+            #指定起始也结束页码
+            page_start = int(input('enter start page:'))
+            page_end = int(input('enter end page:'))
+            #创建文件夹
+            if not os.path.exists('images'):
+               os.mkdir('images')
+            #循环解析且下载指定页码中的图片数据
+            for page in range(page_start,page_end+1):
+               print('正在下载第%d页图片'%page)
+               new_url = format(url % page)
+               response = requests.get(url=new_url,headers=headers)
+               #解析response中的图片链接
+               e = '
+            .*?.*?'
+               pa = re.compile(e,re.S)
+               image_urls = pa.findall(response.text)
+                #循环下载该页码下所有的图片数据
+               for image_url in image_urls:
+                   image_url = 'https:' + image_url
+                   image_name = image_url.split('/')[-1]
+                   image_path = 'images/'+image_name
+                   image_data = requests.get(url=image_url,headers=headers).content
+                   with open(image_path,'wb') as fp:
+                       fp.write(image_data)
+
+Bs4进行数据解析
+      - 数据解析的原理
+            - 1 标签定位
+            - 2 提取标签 标签属性中存储的数据值
+
+      - bs4 数据解析原理
+            - 1 实例化一个BeautifulSoup对象，并且将页面源码加载到该对象中
+            - 2 通过调用 BeautifulSoup对象中相关属性或者方法进行标签定位和数据提取
+      -  环境安装
+            - pip3  install Bs4
+            - pip3  install lxml 解析器bs4使用到
+               - 需要将pip源设置为国内源，阿里源、豆瓣源、网易源等
+               - windows
+                （1）打开文件资源管理器(文件夹地址栏中)
+                （2）地址栏上面输入 %appdata%
+                （3）在这里面新建一个文件夹  pip
+                （4）在pip文件夹里面新建一个文件叫做  pip.ini ,内容写如下即可
+                    [global]
+                    timeout = 6000
+                    index-url = https://mirrors.aliyun.com/pypi/simple/
+                    trusted-host = mirrors.aliyun.com
+               - linux
+                （1）cd ~
+                （2）mkdir ~/.pip
+                （3）vi ~/.pip/pip.conf
+                （4）编辑内容，和windows一模一样
+             - 需要安装：pip install bs4
+               bs4在使用时候需要一个第三方库，把这个库也安装一下
+                 pip install lxml
+            - 基础使用
+                  使用流程：
+                      - 导包：from bs4 import BeautifulSoup
+                      - 使用方式：可以将一个html文档，转化为BeautifulSoup对象，然后通过对象的方法或者属性去查找指定的节点内容
+                          （1）转化本地文件：
+                               - soup = BeautifulSoup(open('本地文件'), 'lxml')
+                          （2）转化网络文件：
+                               - soup = BeautifulSoup('字符串类型或者字节类型', 'lxml')
+                          （3）打印soup对象显示内容为html文件中的内容
+                  基础巩固：
+                      （1）根据标签名查找
+                          - soup.a   只能找到第一个符合要求的标签
+                      （2）获取属性
+                          - soup.a.attrs  获取a所有的属性和属性值，返回一个字典
+                          - soup.a.attrs['href']   获取href属性
+                          - soup.a['href']   也可简写为这种形式
+                      （3）获取内容
+                          - soup.a.string
+                          - soup.a.text
+                          - soup.a.get_text()
+                         【注意】如果标签还有标签，那么string获取到的结果为None，而其它两个，可以获取文本内容
+                      （4）find：找到第一个符合要求的标签
+                          - soup.find('a')  找到第一个符合要求的
+                          - soup.find('a', title="xxx")
+                          - soup.find('a', alt="xxx")
+                          - soup.find('a', class_="xxx")
+                          - soup.find('a', id="xxx")
+                      （5）find_all：找到所有符合要求的标签
+                          - soup.find_all('a')
+                          - soup.find_all(['a','b']) 找到所有的a和b标签
+                          - soup.find_all('a', limit=2)  限制前两个
+                      （6）根据选择器选择指定的内容
+                                 select:soup.select('#feng')
+                          - 常见的选择器：标签选择器(a)、类选择器(.)、id选择器(#)、层级选择器
+                              - 层级选择器：
+                                  div .dudu #lala .meme .xixi  下面好多级
+                                  div > p > a > .lala          只能是下面一级
+                          【注意】select选择器返回永远是列表，需要通过下标提取指定的对象
+            - 项目巩固
+                  需求：使用bs4实现将诗词名句网站中三国演义小说的每一章的内容爬去到本地磁盘进行存储 http://www.shicimingju.com/book/sanguoyanyi.html
+
+                  /usr/bin/env python
+                  # -*- coding:utf-8 -*-
+                  import requests
+                  from bs4 import BeautifulSoup
+                  headers={
+                           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+                       }
+                  def parse_content(url):
+                      #获取标题正文页数据
+                      page_text = requests.get(url,headers=headers).text
+                      soup = BeautifulSoup(page_text,'lxml')
+                      #解析获得标签
+                      ele = soup.find('div',class_='chapter_content')
+                      content = ele.text #获取标签中的数据值
+                      return content
+                  if __name__ == "__main__":
+                       url = 'http://www.shicimingju.com/book/sanguoyanyi.html'
+                       reponse = requests.get(url=url,headers=headers)
+                       page_text = reponse.text
+                       #创建soup对象
+                       soup = BeautifulSoup(page_text,'lxml')
+                       #解析数据
+                       a_eles = soup.select('.book-mulu > ul > li > a')
+                       print(a_eles)
+                       cap = 1
+                       for ele in a_eles:
+                           print('开始下载第%d章节'%cap)
+                           cap+=1
+                           title = ele.string
+                           content_url = 'http://www.shicimingju.com'+ele['href']
+                           content = parse_content(content_url)
+                           with open('./sanguo.txt','w') as fp:
+                               fp.write(title+":"+content+'\n\n\n\n\n')
+                               print('结束下载第%d章节'%cap)
+
+            - 如何实例化 BeautifulSoup 对象
+
+xpath解析
+      - 环境安装
+          -  pip3 install lxml
+      - 解析原理
+            - 使用通用爬虫爬取网页数据
+            - 实例化etree对象，且将页面数据加载到该对象中
+            - 使用xpath函数结合xpath表达式进行标签定位和指定数据提取
+      - 常用xpath表达式
+            - 属性定位：
+                  #找到class属性值为song的div标签
+                  //div[@class="song"]
+            - 层级&索引定位：
+                  #找到class属性值为tang的div的直系子标签ul下的第二个子标签li下的直系子标签a
+                  //div[@class="tang"]/ul/li[2]/a
+            - 逻辑运算：
+                  #找到href属性值为空且class属性值为du的a标签
+                  //a[@href="" and @class="du"]
+            - 模糊匹配：
+                  //div[contains(@class, "ng")]
+                  //div[starts-with(@class, "ta")]
+            - 取文本：
+                  # /表示获取某个标签下的文本内容
+                  # //表示获取某个标签下的文本内容和所有子标签下的文本内容
+                  //div[@class="song"]/p[1]/text()
+                  //div[@class="tang"]//text()
+            - 取属性：
+                  //div[@class="tang"]//li[2]/a/@href
+      - etree对象实例化
+            - 本地文件：tree = etree.parse(文件名)
+                      tree.xpath("xpath表达式")
+            - 网络数据：tree = etree.HTML(网页内容字符串)
+                            tree.xpath("xpath表达式")
+      - 实战案例
+          - 项目需求：解析58二手房的相关数据
+                #解析出一级页面的标题和二级页面的价格和描述
+                import requests
+                from lxml import etree
+                headers = {
+                    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+                }
+                url = 'https://bj.58.com/changping/ershoufang/?utm_source=sem-baidu-pc&spm=105916147073.26420796294&PGTID=0d30000c-0000-17fc-4658-9bdfb947934d&ClickID=3'
+                page_text = requests.get(url=url,headers=headers).text
+                tree = etree.HTML(page_text)
+                li_list = tree.xpath('//ul[@class="house-list-wrap"]/li')
+                data = []
+                for li in li_list:
+                    #解析标题
+                    title = li.xpath('.//div[@class="list-info"]/h2/a/text()')[0]
+                    detail_page_url = li.xpath('.//div[@class="list-info"]/h2/a/@href')[0]
+                    if detail_page_url.split('//')[0] != 'https:':
+                        detail_page_url = 'https:'+detail_page_url
+                    detail_text = requests.get(url=detail_page_url,headers=headers).text
+                    tree = etree.HTML(detail_text)
+                    #解析二级页面的描述和价格
+                    desc = ''.join(tree.xpath('//div[@id="generalDesc"]//div[@class="general-item-wrap"]//text()')).strip(' \n \t')
+                    price = ''.join(tree.xpath('//div[@id="generalExpense"]//div[@class="general-item-wrap"]//text()')).strip(' \n \t')
+                    dic = {
+                        'title':title,
+                        'desc':desc,
+                        'price':price
+                    }
+                    data.append(dic)
+                #进行持久化存储
+                print(data)
+          - 项目需求：解析图片数据：http://pic.netbian.com/4kmeinv/
+                  import requests
+                  from lxml import etree
+                  url = 'http://pic.netbian.com/4kmeinv/'
+                  headers = {
+                      'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+                  }
+                  response = requests.get(url=url,headers=headers)
+                  #获取页面原始编码格式
+                  print(response.encoding)
+                  page_text = response.text
+                  tree = etree.HTML(page_text)
+                  li_list = tree.xpath('//div[@class="slist"]/ul/li')
+                  for li in li_list:
+                      img_url = 'http://pic.netbian.com'+li.xpath('./a/img/@src')[0]
+                      img_name = li.xpath('./a/img/@alt')[0]
+                      img_name = img_name.encode('iso-8859-1').decode('gbk')
+                      print(img_url,img_name)
+          - 项目需求：下载煎蛋网中的图片数据：http://jandan.net/ooxx
+                  import requests
+                  from lxml import etree
+                  from fake_useragent import UserAgent
+                  import base64
+                  import urllib.request
+                  url = 'http://jandan.net/ooxx'
+                  ua = UserAgent(verify_ssl=False,use_cache_server=False).random
+                  headers = {
+                      'User-Agent':ua
+                  }
+                  page_text = requests.get(url=url,headers=headers).text
+                  #查看页面源码：发现所有图片的src值都是一样的。
+                  #简单观察会发现每张图片加载都是通过jandan_load_img(this)这个js函数实现的。
+                  #在该函数后面还有一个class值为img-hash的标签，里面存储的是一组hash值，该值就是加密后的img地址
+                  #加密就是通过js函数实现的，所以分析js函数，获知加密方式，然后进行解密。
+                  #通过抓包工具抓取起始url的数据包，在数据包中全局搜索js函数名（jandan_load_img），然后分析该函数实现加密的方式。
+                  #在该js函数中发现有一个方法调用，该方法就是加密方式，对该方法进行搜索
+                  #搜索到的方法中会发现base64和md5等字样，md5是不可逆的所以优先考虑使用base64解密
+                  #print(page_text)
+                  tree = etree.HTML(page_text)
+                  #在抓包工具的数据包响应对象对应的页面中进行xpath的编写，而不是在浏览器页面中。
+                  #获取了加密的图片url数据
+                  imgCode_list = tree.xpath('//span[@class="img-hash"]/text()')
+                  imgUrl_list = []
+                  for url in imgCode_list:
+                      #base64.b64decode(url)为byte类型，需要转成str
+                      img_url = 'http:'+base64.b64decode(url).decode()
+                      imgUrl_list.append(img_url)
+                  for url in imgUrl_list:
+                      filePath = url.split('/')[-1]
+                      urllib.request.urlretrieve(url=url,filename=filePath)
+                      print(filePath+'下载成功')
+          - 项目需求：解析出所有城市名称https://www.aqistudy.cn/historydata
+                  #!/usr/bin/env  python3
+                  # -*- coding: UTF-8 -*-
+                  import requests
+                  from lxml import etree
 
 
-作业：
-    爬取站长素材中免费简历模板
+                  headers = {
+                      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+                  }
+                  if __name__ == '__main__':
+                      # url = 'https://www.aqistudy.cn/historydata/'
+                      # page_text = requests.get(url=url,headers=headers).text
+                      # # print(page_text)
+                      #
+                      #
+                      # tree = etree.HTML(page_text)
+                      # print(tree)
+                      #
+                      # host_li_list = tree.xpath('//div[@class="bottom"]/ul/li')
+                      # print(host_li_list)
+                      #
+                      # all_city_name = []
+                      # # 解析到热门城市
+                      # for li in host_li_list:
+                      #     host_city_name = li.xpath('./a/text()')[0]
+
+
+
+                      #     all_city_name.append(host_city_name)
+                      #
+                      # # 解析的是全部城市的名称
+                      # all_li_list = tree.xpath('//div[@class="bottom"]/ul/div[2]/li')
+                      # print(all_li_list)
+                      # for li in all_li_list:
+                      #     hos_city_name = li.xpath('./a/text()')[0]
+                      #     all_city_name.append(hos_city_name)
+                      #     print(hos_city_name)
+                      # print(all_city_name,len(all_city_name))
+                      url = 'https://www.aqistudy.cn/historydata/'
+                      page_text = requests.get(url=url,headers=headers).text
+
+                      tree = etree.HTML(page_text)
+                      # 解析到热门城市和所有城市对应a标签
+                      #//div[@class="bottom"]/ul/li/a             # 热门城市a标签的层级关系
+                      #//div[@class="bottom"]/ul/div[2]/li/a     # 全部城市a标签的层级关系
+                      all_li_list = tree.xpath('//div[@class="bottom"]/ul/li/a | //div[@class="bottom"]/ul/div[2]/li/a')
+                      all_city_name = []
+                      for  li in all_li_list:
+                          host_city_name = li.xpath('./text()')[0]
+                          all_city_name.append(host_city_name)
+                          print(host_city_name)
+                      print(all_city_name,len(all_city_name))
