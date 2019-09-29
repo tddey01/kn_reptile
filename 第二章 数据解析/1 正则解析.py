@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 # 需求 爬取丑事百科中糗图块下所有的糗图图片
 import os, requests, re
-from telegram
 
 if __name__ == '__main__':
     # 创建一个文件夹 保存所有图片
