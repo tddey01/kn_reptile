@@ -5,7 +5,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
 }
 
-page_text = requests.get(url=url,headers=headers,proxies={"https":'222.110.147.50:3128'}).text
+page_text = requests.get(url=url,headers=headers,proxies={"https":'115.238.59.86:37600'}).text
 
 with open('ip.html','w',encoding='utf-8') as fp:
     fp.write(page_text)
