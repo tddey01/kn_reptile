@@ -94,5 +94,5 @@ detail_url = 'http://www.renren.com/972363165/profile'
 detail_page_text = session.get(url=detail_url,headers=headers).text
 with open('bobo.html','w',encoding='utf-8') as fp:
     fp.write(detail_page_text)
-print(detail_page_text)
+
 
