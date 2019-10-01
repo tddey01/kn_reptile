@@ -53,7 +53,7 @@ from selenium import webdriver
 import time
 from PIL import Image
 from selenium.webdriver import ActionChains
-bro = webdriver.Chrome(executable_path='./chromedriver')
+bro = webdriver.Chrome(executable_path='chromedriver')
 bro.get('https://kyfw.12306.cn/otn/login/init')
 time.sleep(1)
 
