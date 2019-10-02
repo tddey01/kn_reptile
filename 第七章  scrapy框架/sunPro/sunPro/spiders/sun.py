@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from scrapy.linkextractors import LinkExtractor
+from scrapy.linkextractors import LinkExtractor #连接提取器
 from scrapy.spiders import CrawlSpider, Rule
 from sunPro.items import SunproItem,DetailItem
 

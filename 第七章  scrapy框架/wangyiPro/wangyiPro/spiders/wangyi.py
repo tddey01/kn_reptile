@@ -11,7 +11,7 @@ class WangyiSpider(scrapy.Spider):
 
     #实例化一个浏览器对象
     def __init__(self):
-        self.bro = webdriver.Chrome(executable_path='/Users/bobo/Desktop/小猿圈爬虫课程/chromedriver')
+        self.bro = webdriver.Chrome(executable_path='chromedriver')
 
     def parse(self, response):
         li_list = response.xpath('//*[@id="index2016_wrap"]/div[1]/div[2]/div[2]/div[2]/div[2]/div/ul/li')
